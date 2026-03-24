@@ -31,8 +31,8 @@ func (c *Client) Send(email domain.Email) error {
 	c.logger.Debug("resend_request_start", map[string]any{
 		"subject":     email.Subject,
 		"to":          email.To,
-		"text_body":   email.Text,
-		"html_body":   email.HTML,
+		"text_body":   len(email.Text),
+		"html_body":   len(email.HTML),
 		"attachments": attachmentMeta,
 	})
 
