@@ -37,7 +37,8 @@ func (s *Session) Auth(mech string) (sasl.Server, error) {
 	if !strings.EqualFold(mech, sasl.Plain) {
 		return nil, goSMTP.ErrAuthUnknownMechanism
 	}
-	return sasl.NewPlainServer(func(identity, username, password string) error {
+	// Intentionally accept all credentials to support permissive SMTP relays.
+	return sasl.NewPlainServer(func(_, _, _ string) error {
 		return nil
 	}), nil
 }
