@@ -11,6 +11,7 @@ import (
 	"net/textproto"
 	"strings"
 
+	"github.com/emersion/go-sasl"
 	goSMTP "github.com/emersion/go-smtp"
 	"github.com/igorrius/resend-railway-gateway/internal/app"
 	"github.com/igorrius/resend-railway-gateway/internal/domain"
@@ -27,6 +28,19 @@ type Session struct {
 
 func (s *Session) Reset()        { s.mailFrom = ""; s.rcpts = nil; s.data.Reset() }
 func (s *Session) Logout() error { return nil }
+
+func (s *Session) AuthMechanisms() []string {
+	return []string{sasl.Plain}
+}
+
+func (s *Session) Auth(mech string) (sasl.Server, error) {
+	if !strings.EqualFold(mech, sasl.Plain) {
+		return nil, goSMTP.ErrAuthUnknownMechanism
+	}
+	return sasl.NewPlainServer(func(identity, username, password string) error {
+		return nil
+	}), nil
+}
 
 func (s *Session) Mail(from string, _ *goSMTP.MailOptions) error {
 	s.mailFrom = from
